@@ -8,27 +8,28 @@ dotenv.config();
 
 const app = express();
 
+// FIXED CORS (allows frontend to call backend)
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: true,
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
+// Health check route
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
+// Routes
 app.use("/api", ingestRoutes);
 app.use("/api", chatRoutes);
 
+// Start server
 const port = Number(process.env.PORT || 3001);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
-const allowedOrigins = [
-  "http://localhost:3000",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
