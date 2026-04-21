@@ -28,3 +28,7 @@ const port = Number(process.env.PORT || 3001);
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
