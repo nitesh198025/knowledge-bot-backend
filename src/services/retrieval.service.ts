@@ -39,22 +39,26 @@ function getSectionBoost(query: string, sectionTitle?: string): number {
   return boost;
 }
 
-export async function retrieveRelevantChunks(query: string): Promise<RetrievedChunk[]> {
+// UPDATED FUNCTION SIGNATURE
+export async function retrieveRelevantChunks(
+  query: string,
+  namespace: string
+): Promise<RetrievedChunk[]> {
   const pc = new Pinecone({
-    apiKey: process.env.PINECONE_API_KEY as string
+    apiKey: process.env.PINECONE_API_KEY as string,
   });
 
   const indexName = process.env.PINECONE_INDEX_NAME as string;
-  const namespace = process.env.PINECONE_NAMESPACE || "__default__";
 
+  // ✅ namespace passed dynamically
   const index: any = pc.index({ name: indexName, namespace });
 
   const response = await index.searchRecords({
     query: {
       inputs: { text: query },
-      topK: 8
+      topK: 8,
     },
-    fields: ["text", "sectionTitle", "docName", "chunkType"]
+    fields: ["text", "sectionTitle", "docName", "chunkType"],
   });
 
   const matches = response?.matches || response?.result?.hits || [];
@@ -78,7 +82,7 @@ export async function retrieveRelevantChunks(query: string): Promise<RetrievedCh
       sectionTitle,
       docName: record.docName || record.fields?.docName,
       chunkType,
-      adjustedScore
+      adjustedScore,
     };
   });
 
